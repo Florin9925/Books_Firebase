@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.booksfirebase.R
 import com.example.booksfirebase.activities.MainActivity
 import com.example.booksfirebase.database.Operations
+import com.example.booksfirebase.databinding.BookItemBinding
 import com.example.booksfirebase.fragments.SecondFragment
 import com.example.booksfirebase.interfaces.IActivityFragmentCommunication
 import com.example.booksfirebase.models.Book
 import com.example.booksfirebase.util.HashUtil
-import kotlinx.android.synthetic.main.book_item.view.*
+
 
 class BooksAdapter(
     private val books: ArrayList<Book>,
@@ -23,15 +24,12 @@ class BooksAdapter(
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class BookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleView: TextView = itemView.title_text_view
-        val authorView: TextView = itemView.author_text_view
-        private val descriptionView: TextView = itemView.description_text_view
-        val btnDelete: Button = itemView.button_delete
+        val binding = BookItemBinding.bind(itemView)
 
         fun bind(book: Book) {
-            titleView.text = book.title
-            authorView.text = book.author
-            descriptionView.text = book.description
+            binding.titleTextView.text = book.title
+            binding.authorTextView.text = book.author
+            binding.descriptionTextView.text = book.description
         }
     }
 
@@ -45,7 +43,8 @@ class BooksAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val itemView = inflater.inflate(R.layout.book_item, parent, false)
+        val binding = BookItemBinding.inflate(inflater, parent, false)
+        val itemView = binding.root
 
         return BookViewHolder(itemView)
     }
@@ -60,10 +59,10 @@ class BooksAdapter(
         }
         holder.bind(currentItem)
 
-        holder.btnDelete.setOnClickListener(null)
-        holder.btnDelete.setOnClickListener {
+        holder.binding.buttonDelete.setOnClickListener(null)
+        holder.binding.buttonDelete.setOnClickListener {
             deleteFromDB(
-                HashUtil.makeKey(holder.titleView.text.toString() + holder.authorView.text.toString()),
+                HashUtil.makeKey(holder.binding.titleTextView.text.toString() + holder.binding.authorTextView.text.toString()),
                 position
             )
         }

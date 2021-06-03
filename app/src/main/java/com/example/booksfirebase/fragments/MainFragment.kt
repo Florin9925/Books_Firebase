@@ -9,27 +9,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.booksfirebase.R
 import com.example.booksfirebase.adapters.BooksAdapter
 import com.example.booksfirebase.database.Operations
+import com.example.booksfirebase.databinding.FragmentMainBinding
 import com.example.booksfirebase.interfaces.IActivityFragmentCommunication
 import com.example.booksfirebase.models.Book
 import com.example.booksfirebase.util.HashUtil
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.fragment_main.*
 
 
 class MainFragment : Fragment() {
     private var activity: IActivityFragmentCommunication? = null
 
+    private var _binding: FragmentMainBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,10 +41,10 @@ class MainFragment : Fragment() {
 
         getBooks()
 
-        add_book_button.setOnClickListener {
-            val title = book_title_edit_text.text.toString().trim()
-            val author = book_author_edit_text.text.toString().trim()
-            val description = book_description_edit_text.text.toString().trim()
+            binding.addBookButton.setOnClickListener {
+            val title = binding.bookTitleEditText.text.toString().trim()
+            val author = binding.bookAuthorEditText.text.toString().trim()
+            val description = binding.bookDescriptionEditText.text.toString().trim()
 
             if (title.isNotEmpty() && author.isNotEmpty() && description.isNotEmpty()) {
                 addBook(Book(title, author, description))
@@ -55,6 +59,11 @@ class MainFragment : Fragment() {
         if (context is IActivityFragmentCommunication) {
             this.activity = context
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
@@ -74,8 +83,8 @@ class MainFragment : Fragment() {
                 }
 
                 if (books.size > 0) {
-                    books_recycler_view.adapter = BooksAdapter(books, activity)
-                    books_recycler_view.layoutManager = LinearLayoutManager(context)
+                    binding.booksRecyclerView.adapter = BooksAdapter(books, activity)
+                    binding.booksRecyclerView.layoutManager = LinearLayoutManager(context)
                 }
             }
 
